@@ -17,7 +17,8 @@ const CLUB_DATA = {
         { id: "p13", name: "Trish", active: true },
         { id: "p14", name: "Duncan", active: true },
         { id: "p15", name: "Debra", active: true },
-        { id: "p16", name: "Robert", active: false }
+        { id: "p16", name: "Robert", active: false },
+        { id: "p17", name: "Jo", active: true }
     ],
 
     players: [
@@ -126,6 +127,7 @@ const CLUB_DATA = {
     stats_25_26: [
         { name: "Craig", gamesPlayed: 18, roundsWon: 29, winRate: 0.537 },
         { name: "Hayley", gamesPlayed: 5, roundsWon: 7, winRate: 0.467 },
+        { name: "Jo", gamesPlayed: 14, roundsWon: 17, winRate: 0.405 },
         { name: "Lee", gamesPlayed: 14, roundsWon: 18, winRate: 0.429 },
         { name: "Lynne", gamesPlayed: 17, roundsWon: 23, winRate: 0.451 },
         { name: "Mark Atkinson", gamesPlayed: 14, roundsWon: 25, winRate: 0.595 },
