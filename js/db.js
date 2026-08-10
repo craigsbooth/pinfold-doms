@@ -58,6 +58,31 @@ const DB = {
     getOrDefault(key, defaultVal) {
         const v = this.get(key);
         return v !== null ? v : defaultVal;
+    },
+
+    // Real-time listener - refreshes cache and triggers callback on changes
+    _listeners: [],
+    _onChangeCallback: null,
+
+    onChange(callback) {
+        this._onChangeCallback = callback;
+    },
+
+    startListening() {
+        this._docs.forEach(docId => {
+            const unsub = db.collection('club').doc(docId).onSnapshot(snap => {
+                if (snap.exists) {
+                    const newVal = snap.data().value;
+                    const oldVal = JSON.stringify(this._cache[docId]);
+                    this._cache[docId] = newVal;
+                    // Only trigger refresh if value actually changed and wasn't from us
+                    if (this._loaded && JSON.stringify(newVal) !== oldVal && this._onChangeCallback) {
+                        this._onChangeCallback(docId);
+                    }
+                }
+            }, err => { console.warn('Listener error:', docId, err); });
+            this._listeners.push(unsub);
+        });
     }
 };
 

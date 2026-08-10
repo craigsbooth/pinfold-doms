@@ -302,4 +302,12 @@
 
     // ===== INIT =====
     renderPlayerView();
+
+    // Start real-time listener — auto-refresh when others make changes
+    DB.startListening();
+    DB.onChange((docId) => {
+        // Only refresh player view if we're not in admin (avoid disrupting admin edits)
+        if (!adminView.classList.contains('hidden')) return;
+        renderPlayerView();
+    });
 })();
