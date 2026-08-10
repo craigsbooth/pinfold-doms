@@ -49,6 +49,7 @@ const DB = {
     // Set a value (write to cache + Firestore)
     set(key, value) {
         this._cache[key] = value;
+        this._markWrite();
         // Fire-and-forget write to Firestore
         db.collection('club').doc(key).set({ value: value, updated: new Date().toISOString() })
             .catch(e => console.warn('Write failed:', key, e));
@@ -63,20 +64,24 @@ const DB = {
     // Real-time listener - refreshes cache and triggers callback on changes
     _listeners: [],
     _onChangeCallback: null,
+    _lastWriteTime: 0,
 
     onChange(callback) {
         this._onChangeCallback = callback;
+    },
+
+    // Mark that we just wrote (so we can ignore our own echo)
+    _markWrite() {
+        this._lastWriteTime = Date.now();
     },
 
     startListening() {
         this._docs.forEach(docId => {
             const unsub = db.collection('club').doc(docId).onSnapshot(snap => {
                 if (snap.exists) {
-                    const newVal = snap.data().value;
-                    const oldVal = JSON.stringify(this._cache[docId]);
-                    this._cache[docId] = newVal;
-                    // Only trigger refresh if value actually changed and wasn't from us
-                    if (this._loaded && JSON.stringify(newVal) !== oldVal && this._onChangeCallback) {
+                    this._cache[docId] = snap.data().value;
+                    // Ignore snapshots that come within 2s of our own write
+                    if (this._loaded && (Date.now() - this._lastWriteTime > 2000) && this._onChangeCallback) {
                         this._onChangeCallback(docId);
                     }
                 }
