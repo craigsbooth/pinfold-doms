@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boldron Pinfold - 5s &amp; 3s Dominoes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading screen -->
+    <div id="loading-screen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;"><p style="font-size:1.2rem;color:var(--primary);font-weight:600;">Loading...</p></div>
+    <!-- Player Home View -->
+    <div id="player-view">
+        <header class="player-header">
+            <div class="header-top">
+                <div class="club-brand">
+                    <span class="domino-icon">🁣</span>
+                    <div>
+                        <h1>Boldron Pinfold</h1>
+                        <p>5s &amp; 3s Dominoes</p>
+                    </div>
+                </div>
+                <button id="admin-toggle" class="admin-link" aria-label="Switch to admin view">
+                    Admin ⚙️
+                </button>
+            </div>
+        </header>
+
+        <main class="player-main">
+            <!-- Who am I selector -->
+            <div class="player-selector">
+                <label for="current-player">Who are you?</label>
+                <select id="current-player">
+                    <option value="">-- Select your name --</option>
+                </select>
+            </div>
+
+            <!-- Upcoming fixtures calendar -->
+            <section class="upcoming-section">
+                <h2>Upcoming Games</h2>
+                <div id="upcoming-fixtures" class="fixture-timeline"></div>
+            </section>
+
+            <!-- Personal stats -->
+            <div id="my-stats"></div>
+
+            <!-- Past results (simple) -->
+            <section class="recent-section">
+                <h2>Recent Results</h2>
+                <div id="recent-results" class="recent-results-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Admin View -->
+    <div id="admin-view" class="hidden">
+        <header class="admin-header">
+            <div class="header-top">
+                <div class="club-brand">
+                    <span class="domino-icon">🁣</span>
+                    <div>
+                        <h1>Boldron Pinfold</h1>
+                        <p>Admin Panel</p>
+                    </div>
+                </div>
+                <button id="player-toggle" class="admin-link" aria-label="Switch to player view">
+                    ← Back to Home
+                </button>
+            </div>
+            <nav class="admin-nav">
+                <button class="admin-tab active" data-tab="fixtures">Fixtures &amp; Team</button>
+                <button class="admin-tab" data-tab="results-entry">Enter Results</button>
+                <button class="admin-tab" data-tab="stats">Player Stats</button>
+                <button class="admin-tab" data-tab="finances">Finances</button>
+                <button class="admin-tab" data-tab="players">Players</button>
+                <button class="admin-tab" data-tab="season-manager">New Season</button>
+            </nav>
+        </header>
+
+        <main class="admin-main">
+            <section id="tab-fixtures" class="admin-tab-content active"></section>
+            <section id="tab-results-entry" class="admin-tab-content"></section>
+            <section id="tab-stats" class="admin-tab-content"></section>
+            <section id="tab-finances" class="admin-tab-content"></section>
+            <section id="tab-players" class="admin-tab-content"></section>
+            <section id="tab-season-manager" class="admin-tab-content"></section>
+        </main>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025-26 Boldron Pinfold | <a href="http://www.bcad5sand3s.co.uk" target="_blank" rel="noopener">BCAD 5s &amp; 3s League</a></p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

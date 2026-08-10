@@ -1,0 +1,1694 @@
+/* Reset & Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary: #1a365d;
+    --primary-light: #2c5282;
+    --accent: #ecc94b;
+    --accent-dark: #d69e2e;
+    --success: #276749;
+    --success-bg: #c6f6d5;
+    --danger: #c53030;
+    --danger-bg: #fed7d7;
+    --warning: #975a16;
+    --warning-bg: #fefcbf;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #1a202c;
+    --text-light: #4a5568;
+    --text-muted: #a0aec0;
+    --border: #e2e8f0;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --radius: 10px;
+    --radius-lg: 16px;
+    --font-size-base: 16px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: var(--font-size-base);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.hidden { display: none !important; }
+
+/* ===== PLAYER VIEW ===== */
+.player-header {
+    background: var(--primary);
+    color: white;
+    padding: 1rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+}
+
+.header-top {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.club-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.domino-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.club-brand h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.club-brand p {
+    font-size: 0.75rem;
+    opacity: 0.75;
+    font-weight: 400;
+}
+
+.admin-link {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.8);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.admin-link:hover {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.player-main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+/* Player Selector */
+.player-selector {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.player-selector label {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.player-selector select {
+    font-size: 1.1rem;
+    padding: 0.6rem 1rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    min-width: 200px;
+    cursor: pointer;
+}
+
+.player-selector select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Section headings */
+.upcoming-section h2,
+.recent-section h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--accent);
+    display: inline-block;
+}
+
+.recent-section {
+    margin-top: 2.5rem;
+}
+
+/* Fixture Timeline (Calendar-style cards) */
+.fixture-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.fixture-tile {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.fixture-tile:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.fixture-tile-header {
+    display: flex;
+    align-items: stretch;
+}
+
+.fixture-date-block {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1rem;
+    min-width: 80px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.fixture-date-block .day-name {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+}
+
+.fixture-date-block .day-num {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.fixture-date-block .month {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+}
+
+.fixture-info {
+    flex: 1;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.fixture-opponent-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.venue-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.venue-badge.home {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.venue-badge.away {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+/* Availability controls in fixture tile */
+.fixture-tile-body {
+    padding: 0.75rem 1.25rem 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.avail-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.avail-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.avail-btn {
+    padding: 0.5rem 1.2rem;
+    border: 2px solid var(--border);
+    border-radius: 25px;
+    background: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.avail-btn:hover {
+    border-color: var(--primary);
+}
+
+.avail-btn.selected-available {
+    background: var(--success-bg);
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.avail-btn.selected-reserve {
+    background: var(--warning-bg);
+    border-color: var(--warning);
+    color: var(--warning);
+}
+
+.avail-btn.selected-not-available {
+    background: var(--danger-bg);
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.avail-saved {
+    font-size: 0.8rem;
+    color: var(--success);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.avail-saved.show {
+    opacity: 1;
+}
+
+/* Duties row */
+.fixture-duties {
+    padding: 0.5rem 1.25rem 0.75rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.duty-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.duty-chip strong {
+    color: var(--text);
+}
+
+/* Recent Results */
+.recent-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.result-item {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 0.75rem 1.25rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.result-item .result-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    min-width: 70px;
+}
+
+.result-item .result-opponent {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.result-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.result-badge.win {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.result-badge.lost, .result-badge.loss {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+/* ===== ADMIN VIEW ===== */
+.admin-header {
+    background: var(--primary);
+    color: white;
+    padding: 1rem 1.5rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+}
+
+.admin-nav {
+    max-width: 1200px;
+    margin: 0.75rem auto 0;
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    padding-bottom: 0;
+}
+
+.admin-tab {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius) var(--radius) 0 0;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.admin-tab:hover {
+    color: white;
+    background: rgba(255,255,255,0.1);
+}
+
+.admin-tab.active {
+    background: var(--bg);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.admin-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.admin-tab-content {
+    display: none;
+}
+
+.admin-tab-content.active {
+    display: block;
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Admin: Team Overview Cards */
+.team-overview-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.team-card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.team-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.team-card-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.team-status {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.status-pill {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+}
+
+.status-pill.full { background: var(--success-bg); color: var(--success); }
+.status-pill.short { background: var(--danger-bg); color: var(--danger); }
+.status-pill.ok { background: var(--warning-bg); color: var(--warning); }
+
+.team-card-body {
+    padding: 1rem 1.25rem;
+}
+
+.team-players-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.4rem;
+}
+
+.team-player {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.team-player .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.team-player .dot.available { background: var(--success); }
+.team-player .dot.reserve { background: var(--accent-dark); }
+.team-player .dot.not-available { background: var(--danger); }
+.team-player .dot.unknown { background: var(--text-muted); }
+
+.team-duties {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+
+.team-duties .duty-chip strong {
+    color: var(--text);
+}
+
+/* Admin: Stats Table */
+.stats-wrapper {
+    overflow-x: auto;
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.stats-table th,
+.stats-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.stats-table th {
+    background: var(--primary);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.stats-table tbody tr:nth-child(even) {
+    background: #f7fafc;
+}
+
+.stats-table tbody tr:hover {
+    background: #edf2f7;
+}
+
+.stats-table td {
+    font-size: 0.9rem;
+}
+
+.win-rate-bar {
+    display: inline-block;
+    width: 60px;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+}
+
+.win-rate-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--success);
+}
+
+.season-picker {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.season-picker label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.season-picker select {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+}
+
+/* Admin: League */
+.league-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.league-card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.league-card h3 {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+}
+
+.league-tbl {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.league-tbl th,
+.league-tbl td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.league-tbl th {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.league-tbl tr.us {
+    background: #fffff0;
+    font-weight: 700;
+}
+
+.league-tbl tr.us td {
+    color: var(--primary);
+}
+
+/* Admin: Finances */
+.finance-summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.finance-box {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.finance-box h4 {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+}
+
+.finance-box .amount {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.finance-box .amount.in { color: var(--success); }
+.finance-box .amount.out { color: var(--danger); }
+.finance-box .amount.bal { color: var(--primary); }
+
+.finance-tbl-wrap {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+.finance-tbl-wrap h3 {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--primary);
+}
+
+.finance-tbl {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.finance-tbl th,
+.finance-tbl td {
+    padding: 0.6rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+}
+
+.finance-tbl th {
+    background: var(--bg);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+/* Admin: All Fixtures */
+.fixtures-list-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.fixture-row-admin {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 0.75rem 1.25rem;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 100px 1fr 80px 80px;
+    align-items: center;
+    gap: 1rem;
+}
+
+.fixture-row-admin .fx-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.fixture-row-admin .fx-opp {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Footer */
+.site-footer {
+    background: var(--primary);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.8rem;
+    margin-top: 3rem;
+}
+
+.site-footer a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .player-header, .admin-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .club-brand h1 {
+        font-size: 1.1rem;
+    }
+
+    .domino-icon {
+        font-size: 2rem;
+    }
+
+    .player-main, .admin-main {
+        padding: 1rem;
+    }
+
+    .fixture-tile-header {
+        flex-direction: column;
+    }
+
+    .fixture-date-block {
+        flex-direction: row;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .fixture-info {
+        padding: 0.75rem 1rem;
+    }
+
+    .avail-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .fixture-row-admin {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+    }
+
+    .team-players-list {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .finance-summary-row {
+        grid-template-columns: 1fr;
+    }
+
+    .league-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Finance Add Form */
+.finance-add-form {
+    padding: 1rem 1.25rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+    min-width: 140px;
+}
+
+.form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.form-group input,
+.form-group select {
+    font-size: 1rem;
+    padding: 0.55rem 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-group-btn {
+    flex: 0 0 auto;
+    min-width: auto;
+}
+
+.btn-add {
+    padding: 0.6rem 1.5rem;
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.btn-add:hover {
+    background: #22543d;
+}
+
+.form-msg {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-group {
+        min-width: 100%;
+    }
+
+    .btn-add {
+        width: 100%;
+        padding: 0.75rem;
+    }
+}
+
+/* Season Manager */
+.season-mgr {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.season-mgr-section {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.season-mgr-section h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+}
+
+.section-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.season-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.season-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg);
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+}
+
+.season-list-item.active-season {
+    border-color: var(--success);
+    background: #f0fff4;
+}
+
+.season-list-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.season-fixture-count {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.btn-set-active {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-set-active:hover {
+    background: var(--primary-light);
+}
+
+.new-season-form {
+    margin-top: 0.5rem;
+}
+
+.new-season-form h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.new-fixtures-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+}
+
+.pending-fixture {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+}
+
+.pending-fixture strong {
+    flex: 1;
+}
+
+.btn-remove-fx {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.btn-remove-fx:hover {
+    background: var(--danger-bg);
+}
+
+.btn-add-fixture {
+    padding: 0.55rem 1.2rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-add-fixture:hover {
+    background: var(--primary-light);
+}
+
+.btn-create-season {
+    padding: 0.75rem 2rem;
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-create-season:hover {
+    background: #22543d;
+}
+
+@media (max-width: 600px) {
+    .season-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .pending-fixture {
+        flex-wrap: wrap;
+    }
+}
+
+/* Delete season button */
+.btn-delete-season {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--danger-bg);
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-delete-season:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* Editable duty fields in admin */
+.team-duties-edit {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.duty-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.duty-edit-row label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-light);
+    min-width: 90px;
+    white-space: nowrap;
+}
+
+.duty-input {
+    flex: 1;
+    font-size: 0.9rem;
+    padding: 0.45rem 0.7rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    max-width: 300px;
+}
+
+.duty-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.duty-saved-msg {
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 600px) {
+    .duty-edit-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .duty-input {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+/* Team player grid with checkboxes */
+.team-players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.4rem;
+}
+
+.team-player-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    background: var(--bg);
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.team-player-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--success);
+}
+
+.team-player-row .player-name {
+    flex: 1;
+    font-weight: 500;
+}
+
+.team-player-row .avail-override {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.3rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: white;
+}
+
+/* Playing team display on player view */
+.fixture-playing-team {
+    padding: 0.5rem 1.25rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+}
+
+.playing-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.playing-name {
+    font-size: 0.8rem;
+    padding: 0.15rem 0.5rem;
+    background: var(--bg);
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.playing-name.me {
+    background: var(--success-bg);
+    color: var(--success);
+    font-weight: 700;
+}
+
+.fixture-tile.playing-highlight {
+    border: 2px solid var(--success);
+}
+
+/* Results entry form */
+.result-form-card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.result-form-header {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.25rem;
+}
+
+.result-form-header h4 {
+    font-size: 1rem;
+}
+
+.result-form-body {
+    padding: 1.25rem;
+}
+
+.result-match-outcome {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.result-match-outcome label {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.result-outcome-btns {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.outcome-btn {
+    padding: 0.6rem 1.5rem;
+    border: 2px solid var(--border);
+    border-radius: 25px;
+    background: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.outcome-btn:hover {
+    border-color: var(--primary);
+}
+
+.outcome-btn.selected-win {
+    background: var(--success-bg);
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.outcome-btn.selected-lost {
+    background: var(--danger-bg);
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.result-scores-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.score-header {
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    gap: 1rem;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.score-row {
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.4rem 0.5rem;
+    background: var(--bg);
+    border-radius: 6px;
+}
+
+.score-player-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.score-input {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.4rem 0.6rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.score-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+@media (max-width: 600px) {
+    .team-players-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .score-header, .score-row {
+        grid-template-columns: 1fr 100px;
+    }
+}
+
+/* Collapsible team cards */
+.collapsible-header {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.collapsible-header:hover {
+    background: #e8edf3;
+}
+
+.collapse-arrow {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-left: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.team-card-body.collapsed {
+    display: none;
+}
+
+/* Players management */
+.players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.player-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.player-name-input {
+    flex: 1;
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    max-width: 300px;
+}
+
+.player-name-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.btn-remove-player {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.btn-remove-player:hover {
+    background: var(--danger-bg);
+    border-color: var(--danger);
+}
+
+.add-player-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.add-player-row .player-name-input {
+    min-width: 200px;
+}
+
+/* Player ID badge */
+.player-id-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--bg);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.btn-deactivate-player {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.35rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-deactivate-player:hover {
+    background: var(--warning-bg);
+    border-color: var(--warning);
+}
+
+.btn-reactivate-player {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid var(--success);
+    border-radius: var(--radius);
+    cursor: pointer;
+}
+
+.btn-reactivate-player:hover {
+    background: var(--success);
+    color: white;
+}
+
+.inactive-player {
+    opacity: 0.6;
+}
+
+.player-inactive-name {
+    flex: 1;
+    font-size: 1rem;
+    padding: 0.5rem 0;
+    color: var(--text-light);
+}
+
+/* Editable fixtures list */
+.fixtures-edit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.fixture-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+}
+
+.fx-edit-date {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    width: 140px;
+}
+
+.fx-edit-opp {
+    font-size: 0.9rem;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    flex: 1;
+    min-width: 120px;
+}
+
+.fx-edit-venue {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: white;
+}
+
+.fx-edit-date:focus,
+.fx-edit-opp:focus,
+.fx-edit-venue:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.fx-upcoming-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    min-width: 60px;
+    text-align: center;
+}
+
+.btn-remove-fx-admin {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-remove-fx-admin:hover {
+    background: var(--danger-bg);
+}
+
+.add-fixture-section {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+}
+
+@media (max-width: 600px) {
+    .fixture-edit-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .fx-edit-date {
+        width: 100%;
+    }
+}
+
+/* Inline fixture edit inside team card */
+.fixture-edit-inline {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.fixture-edit-inline .fx-edit-date,
+.fixture-edit-inline .fx-edit-opp,
+.fixture-edit-inline .fx-edit-venue {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+}
+
+.fixture-edit-inline .fx-edit-opp {
+    flex: 1;
+    min-width: 100px;
+}
+
+/* Next game highlight */
+.fixture-tile.next-game {
+    border: 2px solid var(--primary);
+    position: relative;
+}
+
+.next-game-banner {
+    background: var(--primary);
+    color: white;
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    padding: 0.2rem;
+}
+
+/* Draw result badge */
+.result-badge.draw {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.outcome-btn.selected-draw {
+    background: var(--warning-bg);
+    border-color: var(--warning);
+    color: var(--warning);
+}
+
+/* Personal stats card */
+.my-stats-card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    margin: 1.5rem 0;
+}
+
+.my-stats-card h3 {
+    font-size: 1rem;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+}
+
+.my-stats-nums {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.my-stats-nums > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-num {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Finance delete button */
+.btn-del-fin {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.btn-del-fin:hover {
+    opacity: 1;
+    background: var(--danger-bg);
+}
