@@ -66,21 +66,27 @@
 
     function getFixturesOverrides(){return DB.getOrDefault('fixtures_overrides',{});}
     function saveFixturesOverrides(d){DB.set('fixtures_overrides',d);}
-    function getCurrentFixtures(){
-        const s=getActiveSeason();const overrides=getFixturesOverrides();
-        if(overrides[s])return overrides[s];
-        const c=loadCustomSeasons();if(c[s])return c[s].fixtures;
+    function getCurrentFixtures(comp){
+        comp=comp||'league';const s=getActiveSeason();const key=comp==='league'?s:s+'_'+comp;
+        const overrides=getFixturesOverrides();if(overrides[key])return overrides[key];
+        const c=loadCustomSeasons();if(c[s]&&comp==='league')return c[s].fixtures;
+        if(comp==='spring'){if(s==='25-26')return CLUB_DATA.spring_cup_25_26;if(s==='24-25')return CLUB_DATA.spring_cup_24_25;return[];}
+        if(comp==='knockouts'){if(s==='24-25')return CLUB_DATA.knock_outs_24_25;return[];}
         if(s==='24-25')return CLUB_DATA.fixtures_24_25;return CLUB_DATA.fixtures_25_26;
     }
-    function getEditableFixtures(sid){
-        const overrides=getFixturesOverrides();if(overrides[sid])return JSON.parse(JSON.stringify(overrides[sid]));
-        const c=loadCustomSeasons();if(c[sid])return JSON.parse(JSON.stringify(c[sid].fixtures));
+    function getEditableFixtures(sid,comp){
+        comp=comp||'league';const key=comp==='league'?sid:sid+'_'+comp;
+        const overrides=getFixturesOverrides();if(overrides[key])return JSON.parse(JSON.stringify(overrides[key]));
+        const c=loadCustomSeasons();if(c[sid]&&comp==='league')return JSON.parse(JSON.stringify(c[sid].fixtures));
+        if(comp==='spring'){if(sid==='25-26')return JSON.parse(JSON.stringify(CLUB_DATA.spring_cup_25_26));if(sid==='24-25')return JSON.parse(JSON.stringify(CLUB_DATA.spring_cup_24_25));return[];}
+        if(comp==='knockouts'){if(sid==='24-25')return JSON.parse(JSON.stringify(CLUB_DATA.knock_outs_24_25));return[];}
         if(sid==='25-26')return JSON.parse(JSON.stringify(CLUB_DATA.fixtures_25_26));
         if(sid==='24-25')return JSON.parse(JSON.stringify(CLUB_DATA.fixtures_24_25));return[];
     }
-    function saveEditableFixtures(sid,fx){
-        const overrides=getFixturesOverrides();overrides[sid]=fx;saveFixturesOverrides(overrides);
-        const c=loadCustomSeasons();if(c[sid]){c[sid].fixtures=fx;saveCustomSeasons(c);}
+    function saveEditableFixtures(sid,fx,comp){
+        comp=comp||'league';const key=comp==='league'?sid:sid+'_'+comp;
+        const overrides=getFixturesOverrides();overrides[key]=fx;saveFixturesOverrides(overrides);
+        const c=loadCustomSeasons();if(c[sid]&&comp==='league'){c[sid].fixtures=fx;saveCustomSeasons(c);}
     }
 
     function loadAvailability(){return DB.getOrDefault('availability',CLUB_DATA.availability_25_26);}
@@ -118,8 +124,11 @@
     function renderPlayerView(){renderUpcomingFixtures();renderRecentResults();renderMyStats();}
 
     function renderUpcomingFixtures(){
-        const container=document.getElementById('upcoming-fixtures');const fixtures=getCurrentFixtures();
-        const upcoming=fixtures.filter(f=>f.opponent.toLowerCase()!=='bye'&&isUpcoming(f.date));
+        const container=document.getElementById('upcoming-fixtures');
+        // Combine all competitions for the player view
+        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');
+        const allFixtures=[...league,...spring,...knockouts].sort((a,b)=>a.date.localeCompare(b.date));
+        const upcoming=allFixtures.filter(f=>f.opponent.toLowerCase()!=='bye'&&isUpcoming(f.date));
         if(!upcoming.length){container.innerHTML='<p style="color:var(--text-muted);font-size:1rem;padding:1rem 0;">No upcoming games scheduled.</p>';return;}
         const currentPlayer=playerSelect.value;const avData=loadAvailability();
         container.innerHTML=upcoming.map((f,idx)=>{
@@ -155,7 +164,9 @@
     }
 
     function renderRecentResults(){
-        const container=document.getElementById('recent-results');const results=loadMatchResults();const fixtures=getCurrentFixtures();
+        const container=document.getElementById('recent-results');const results=loadMatchResults();
+        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');
+        const fixtures=[...league,...spring,...knockouts].sort((a,b)=>a.date.localeCompare(b.date));
         const played=fixtures.filter(f=>{const k=getAvailKey(f);return(results[k]&&results[k].result)||(f.result&&isPast(f.date));}).reverse().slice(0,6);
         if(!played.length){container.innerHTML='<p style="color:var(--text-muted)">No results yet.</p>';return;}
         container.innerHTML=played.map(f=>{const r=results[getAvailKey(f)];const res=r?r.result:f.result;
@@ -177,12 +188,15 @@
     function renderAdminTab(tab){switch(tab){case 'fixtures':renderFixturesAndTeam();break;case 'results-entry':renderResultsEntry();break;case 'stats':renderStats();break;case 'finances':renderFinances();break;case 'players':renderPlayers();break;case 'season-manager':renderSeasonManager();break;}}
 
     // ===== FIXTURES & TEAM =====
+    let currentComp = 'league';
     function renderFixturesAndTeam(){
-        const container=document.getElementById('tab-fixtures');const fixtures=getCurrentFixtures();const activeSeason=getActiveSeason();
+        const container=document.getElementById('tab-fixtures');const activeSeason=getActiveSeason();
+        const fixtures=getCurrentFixtures(currentComp);
         const upcoming=fixtures.filter(f=>f.opponent.toLowerCase()!=='bye'&&isUpcoming(f.date));
         const past=fixtures.filter(f=>f.opponent.toLowerCase()!=='bye'&&isPast(f.date));
         const results=loadMatchResults();const avData=loadAvailability();
-        let html='<div class="team-overview-grid">';
+        let html=`<div class="team-overview-grid">
+            <div class="comp-selector"><button class="comp-btn ${currentComp==='league'?'active':''}" data-comp="league">League</button><button class="comp-btn ${currentComp==='spring'?'active':''}" data-comp="spring">Spring Cup</button><button class="comp-btn ${currentComp==='knockouts'?'active':''}" data-comp="knockouts">Knock Outs</button></div>`;
         if(upcoming.length>0){
             html+='<h3 style="color:var(--primary);margin-bottom:0.75rem;">Upcoming</h3>';
             upcoming.forEach(f=>{
@@ -201,19 +215,23 @@
         if(past.length>0){html+='<h3 style="color:var(--primary);margin:1.5rem 0 0.75rem;">Past</h3><div class="fixtures-list-admin">';past.forEach(f=>{const r=results[getAvailKey(f)];const res=r?r.result:f.result;html+=`<div class="fixture-row-admin"><span class="fx-date">${formatDate(f.date)}</span><span class="fx-opp">${f.opponent}</span><span class="venue-badge ${(f.venue||'').toLowerCase()}">${f.venue||'-'}</span>${res?`<span class="result-badge ${res.toLowerCase()}">${res}</span>`:'—'}</div>`;});html+='</div>';}
         html+=`<div class="add-fixture-section" style="margin-top:1.5rem;"><h4 style="margin-bottom:0.5rem;color:var(--primary);">Add Fixture</h4><div class="form-row"><div class="form-group"><label>Date</label><input type="date" id="addfx-date"></div><div class="form-group"><label>Opponent</label><input type="text" id="addfx-opp" placeholder="e.g. Blue Bell"></div><div class="form-group"><label>Venue</label><select id="addfx-venue"><option value="Home">Home</option><option value="Away">Away</option></select></div><div class="form-group form-group-btn"><button id="addfx-btn" class="btn-add-fixture">+ Add</button></div></div><div id="addfx-msg" class="form-msg"></div></div></div>`;
         container.innerHTML=html;
+        // Comp selector
+        container.querySelectorAll('.comp-btn').forEach(btn=>{btn.addEventListener('click',()=>{currentComp=btn.dataset.comp;renderFixturesAndTeam();});});
         // Bindings
         container.querySelectorAll('.collapsible-header').forEach(h=>{h.addEventListener('click',e=>{if(e.target.closest('.status-pill'))return;const b=document.getElementById('team-body-'+h.dataset.key);const a=h.querySelector('.collapse-arrow');b.classList.toggle('collapsed');a.textContent=b.classList.contains('collapsed')?'▸':'▾';});});
         container.querySelectorAll('.playing-check').forEach(cb=>{cb.addEventListener('change',e=>{const k=e.target.dataset.key,p=e.target.dataset.player,sel=loadTeamSelections();if(!sel[k])sel[k]=[];if(e.target.checked){if(!sel[k].includes(p))sel[k].push(p);}else{sel[k]=sel[k].filter(x=>x!==p);}saveTeamSelections(sel);});});
         container.querySelectorAll('.avail-override').forEach(s=>{s.addEventListener('change',e=>{const k=e.target.dataset.key,p=e.target.dataset.player,v=e.target.value;const av=loadAvailability();if(!av[k])av[k]={};av[k][p]=v;saveAvailability(av);const dot=e.target.closest('.team-player-row').querySelector('.dot');dot.className='dot '+(v?v.toLowerCase().replace(/\s+/g,'-'):'unknown');});});
         container.querySelectorAll('.duty-input').forEach(i=>{i.addEventListener('change',e=>{const o=loadDutyOverrides();if(!o[e.target.dataset.key])o[e.target.dataset.key]={};o[e.target.dataset.key][e.target.dataset.field]=e.target.value.trim();saveDutyOverrides(o);});});
-        container.querySelectorAll('.fx-edit-date,.fx-edit-opp,.fx-edit-venue').forEach(i=>{i.addEventListener('change',()=>{const fid=i.dataset.id;const fx=getEditableFixtures(activeSeason);const f=fx.find(x=>x.id===fid);if(!f)return;if(i.classList.contains('fx-edit-date'))f.date=i.value;else if(i.classList.contains('fx-edit-opp'))f.opponent=i.value.trim();else f.venue=i.value;fx.sort((a,b)=>a.date.localeCompare(b.date));saveEditableFixtures(activeSeason,fx);renderFixturesAndTeam();});});
-        container.querySelectorAll('.btn-remove-fx-admin').forEach(btn=>{btn.addEventListener('click',()=>{const fid=btn.dataset.id;const fx=getEditableFixtures(activeSeason);const idx=fx.findIndex(x=>x.id===fid);if(idx===-1)return;if(!confirm(`Remove ${fx[idx].opponent}?`))return;fx.splice(idx,1);saveEditableFixtures(activeSeason,fx);renderFixturesAndTeam();});});
-        document.getElementById('addfx-btn').addEventListener('click',()=>{const date=document.getElementById('addfx-date').value,opp=document.getElementById('addfx-opp').value.trim(),venue=document.getElementById('addfx-venue').value,msg=document.getElementById('addfx-msg');if(!date){showMsg(msg,'Date.',true);return;}if(!opp){showMsg(msg,'Opponent.',true);return;}const fx=getEditableFixtures(activeSeason);fx.push({id:genId(),date,opponent:opp,venue,supper:'',drivers:'',bar:'',result:''});fx.sort((a,b)=>a.date.localeCompare(b.date));saveEditableFixtures(activeSeason,fx);document.getElementById('addfx-date').value='';document.getElementById('addfx-opp').value='';showMsg(msg,'✓ Added',false);renderFixturesAndTeam();});
+        container.querySelectorAll('.fx-edit-date,.fx-edit-opp,.fx-edit-venue').forEach(i=>{i.addEventListener('change',()=>{const fid=i.dataset.id;const fx=getEditableFixtures(activeSeason,currentComp);const f=fx.find(x=>x.id===fid);if(!f)return;if(i.classList.contains('fx-edit-date'))f.date=i.value;else if(i.classList.contains('fx-edit-opp'))f.opponent=i.value.trim();else f.venue=i.value;fx.sort((a,b)=>a.date.localeCompare(b.date));saveEditableFixtures(activeSeason,fx,currentComp);renderFixturesAndTeam();});});
+        container.querySelectorAll('.btn-remove-fx-admin').forEach(btn=>{btn.addEventListener('click',()=>{const fid=btn.dataset.id;const fx=getEditableFixtures(activeSeason,currentComp);const idx=fx.findIndex(x=>x.id===fid);if(idx===-1)return;if(!confirm(`Remove ${fx[idx].opponent}?`))return;fx.splice(idx,1);saveEditableFixtures(activeSeason,fx,currentComp);renderFixturesAndTeam();});});
+        document.getElementById('addfx-btn').addEventListener('click',()=>{const date=document.getElementById('addfx-date').value,opp=document.getElementById('addfx-opp').value.trim(),venue=document.getElementById('addfx-venue').value,msg=document.getElementById('addfx-msg');if(!date){showMsg(msg,'Date.',true);return;}if(!opp){showMsg(msg,'Opponent.',true);return;}const fx=getEditableFixtures(activeSeason,currentComp);fx.push({id:genId(),date,opponent:opp,venue,supper:'',drivers:'',bar:'',result:''});fx.sort((a,b)=>a.date.localeCompare(b.date));saveEditableFixtures(activeSeason,fx,currentComp);document.getElementById('addfx-date').value='';document.getElementById('addfx-opp').value='';showMsg(msg,'✓ Added',false);renderFixturesAndTeam();});
     }
 
     // ===== RESULTS ENTRY =====
     function renderResultsEntry(){
-        const container=document.getElementById('tab-results-entry');const fixtures=getCurrentFixtures();const results=loadMatchResults();
+        const container=document.getElementById('tab-results-entry');const results=loadMatchResults();
+        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');
+        const fixtures=[...league,...spring,...knockouts].sort((a,b)=>a.date.localeCompare(b.date));
         const withTeam=fixtures.filter(f=>f.opponent.toLowerCase()!=='bye');
         const firstUnplayed=withTeam.find(f=>!results[getAvailKey(f)]||!results[getAvailKey(f)].result);
         container.innerHTML=`<h3 style="margin-bottom:1rem;color:var(--primary);">Enter Match Results</h3>
@@ -226,7 +244,9 @@
     }
     function renderResultForm(key){
         const fc=document.getElementById('result-entry-form');if(!key){fc.innerHTML='';return;}
-        const fixtures=getCurrentFixtures();const fixture=fixtures.find(f=>getAvailKey(f)===key);if(!fixture){fc.innerHTML='';return;}
+        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');
+        const fixtures=[...league,...spring,...knockouts];
+        const fixture=fixtures.find(f=>getAvailKey(f)===key);if(!fixture){fc.innerHTML='';return;}
         const playing=getPlayingTeam(fixture);const results=loadMatchResults();const existing=results[key]||{};
         const avData=loadAvailability();const players=playing.length>0?playing:getPlayers().filter(p=>{const a=avData[key]||avData[fixture.date]||{};return a[p]==='Available';});
         if(!players.length){fc.innerHTML='<p style="color:var(--text-muted)">No players selected. Tick who is playing in Fixtures & Team first.</p>';return;}
