@@ -1746,3 +1746,17 @@ body {
     border-color: var(--primary);
     color: white;
 }
+
+/* Competition tag on fixture cards */
+.comp-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    background: #e9d8fd;
+    color: #553c9a;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-right: 0.4rem;
+}

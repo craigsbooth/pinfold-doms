@@ -72,6 +72,7 @@
         const c=loadCustomSeasons();if(c[s]&&comp==='league')return c[s].fixtures;
         if(comp==='spring'){if(s==='25-26')return CLUB_DATA.spring_cup_25_26;if(s==='24-25')return CLUB_DATA.spring_cup_24_25;return[];}
         if(comp==='knockouts'){if(s==='24-25')return CLUB_DATA.knock_outs_24_25;return[];}
+        if(comp==='friendly')return[];
         if(s==='24-25')return CLUB_DATA.fixtures_24_25;return CLUB_DATA.fixtures_25_26;
     }
     function getEditableFixtures(sid,comp){
@@ -80,6 +81,7 @@
         const c=loadCustomSeasons();if(c[sid]&&comp==='league')return JSON.parse(JSON.stringify(c[sid].fixtures));
         if(comp==='spring'){if(sid==='25-26')return JSON.parse(JSON.stringify(CLUB_DATA.spring_cup_25_26));if(sid==='24-25')return JSON.parse(JSON.stringify(CLUB_DATA.spring_cup_24_25));return[];}
         if(comp==='knockouts'){if(sid==='24-25')return JSON.parse(JSON.stringify(CLUB_DATA.knock_outs_24_25));return[];}
+        if(comp==='friendly')return[];
         if(sid==='25-26')return JSON.parse(JSON.stringify(CLUB_DATA.fixtures_25_26));
         if(sid==='24-25')return JSON.parse(JSON.stringify(CLUB_DATA.fixtures_24_25));return[];
     }
@@ -126,8 +128,11 @@
     function renderUpcomingFixtures(){
         const container=document.getElementById('upcoming-fixtures');
         // Combine all competitions for the player view
-        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');
-        const allFixtures=[...league,...spring,...knockouts].sort((a,b)=>a.date.localeCompare(b.date));
+        const league=getCurrentFixtures('league').map(f=>({...f,_comp:'League'}));
+        const spring=getCurrentFixtures('spring').map(f=>({...f,_comp:'Spring Cup'}));
+        const knockouts=getCurrentFixtures('knockouts').map(f=>({...f,_comp:'Knock Outs'}));
+        const friendly=getCurrentFixtures('friendly').map(f=>({...f,_comp:'Friendly'}));
+        const allFixtures=[...league,...spring,...knockouts,...friendly].sort((a,b)=>a.date.localeCompare(b.date));
         const upcoming=allFixtures.filter(f=>f.opponent.toLowerCase()!=='bye'&&isUpcoming(f.date));
         if(!upcoming.length){container.innerHTML='<p style="color:var(--text-muted);font-size:1rem;padding:1rem 0;">No upcoming games scheduled.</p>';return;}
         const currentPlayer=playerSelect.value;const avData=loadAvailability();
@@ -141,7 +146,7 @@
             return `<div class="fixture-tile${amI?' playing-highlight':''}${isNext?' next-game':''}">
                 ${isNext?'<div class="next-game-banner">NEXT GAME</div>':''}
                 <div class="fixture-tile-header"><div class="fixture-date-block"><span class="day-name">${parts.dayName}</span><span class="day-num">${parts.dayNum}</span><span class="month">${parts.month}</span></div>
-                <div class="fixture-info"><div><div class="fixture-opponent-name">${f.opponent}</div>${f.venue?`<span class="venue-badge ${vc}">${f.venue}</span>`:''}${amI?'<span class="venue-badge home" style="margin-left:0.5rem;">You\'re Playing!</span>':''}
+                <div class="fixture-info"><div><div class="fixture-opponent-name">${f.opponent}</div>${f._comp&&f._comp!=='League'?`<span class="comp-tag">${f._comp}</span>`:''}${f.venue?`<span class="venue-badge ${vc}">${f.venue}</span>`:''}${amI?'<span class="venue-badge home" style="margin-left:0.5rem;">You\'re Playing!</span>':''}
                 <span class="avail-count${availCount>=6?' full':availCount>=4?' ok':' short'}">${availCount} available${reserveCount?` + ${reserveCount} reserve`:''}</span></div></div></div>
                 ${getDuty(f,'supper')||getDuty(f,'drivers')||getDuty(f,'bar')?`<div class="fixture-duties">${getDuty(f,'supper')?`<div class="duty-chip">🍽️ <strong>${getDuty(f,'supper')}</strong></div>`:''}${getDuty(f,'drivers')?`<div class="duty-chip">🚗 <strong>${getDuty(f,'drivers')}</strong></div>`:''}${getDuty(f,'bar')?`<div class="duty-chip">🍺 <strong>${getDuty(f,'bar')}</strong></div>`:''}</div>`:''}
                 ${teamHtml}
@@ -165,8 +170,8 @@
 
     function renderRecentResults(){
         const container=document.getElementById('recent-results');const results=loadMatchResults();
-        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');
-        const fixtures=[...league,...spring,...knockouts].sort((a,b)=>a.date.localeCompare(b.date));
+        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');const friendly=getCurrentFixtures('friendly');
+        const fixtures=[...league,...spring,...knockouts,...friendly].sort((a,b)=>a.date.localeCompare(b.date));
         const played=fixtures.filter(f=>{const k=getAvailKey(f);return(results[k]&&results[k].result)||(f.result&&isPast(f.date));}).reverse().slice(0,6);
         if(!played.length){container.innerHTML='<p style="color:var(--text-muted)">No results yet.</p>';return;}
         container.innerHTML=played.map(f=>{const r=results[getAvailKey(f)];const res=r?r.result:f.result;
@@ -196,7 +201,7 @@
         const past=fixtures.filter(f=>f.opponent.toLowerCase()!=='bye'&&isPast(f.date));
         const results=loadMatchResults();const avData=loadAvailability();
         let html=`<div class="team-overview-grid">
-            <div class="comp-selector"><button class="comp-btn ${currentComp==='league'?'active':''}" data-comp="league">League</button><button class="comp-btn ${currentComp==='spring'?'active':''}" data-comp="spring">Spring Cup</button><button class="comp-btn ${currentComp==='knockouts'?'active':''}" data-comp="knockouts">Knock Outs</button></div>`;
+            <div class="comp-selector"><button class="comp-btn ${currentComp==='league'?'active':''}" data-comp="league">League</button><button class="comp-btn ${currentComp==='spring'?'active':''}" data-comp="spring">Spring Cup</button><button class="comp-btn ${currentComp==='knockouts'?'active':''}" data-comp="knockouts">Knock Outs</button><button class="comp-btn ${currentComp==='friendly'?'active':''}" data-comp="friendly">Friendly</button></div>`;
         if(upcoming.length>0){
             html+='<h3 style="color:var(--primary);margin-bottom:0.75rem;">Upcoming</h3>';
             upcoming.forEach(f=>{
@@ -230,8 +235,8 @@
     // ===== RESULTS ENTRY =====
     function renderResultsEntry(){
         const container=document.getElementById('tab-results-entry');const results=loadMatchResults();
-        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');
-        const fixtures=[...league,...spring,...knockouts].sort((a,b)=>a.date.localeCompare(b.date));
+        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');const friendly=getCurrentFixtures('friendly');
+        const fixtures=[...league,...spring,...knockouts,...friendly].sort((a,b)=>a.date.localeCompare(b.date));
         const withTeam=fixtures.filter(f=>f.opponent.toLowerCase()!=='bye');
         const firstUnplayed=withTeam.find(f=>!results[getAvailKey(f)]||!results[getAvailKey(f)].result);
         container.innerHTML=`<h3 style="margin-bottom:1rem;color:var(--primary);">Enter Match Results</h3>
@@ -244,8 +249,8 @@
     }
     function renderResultForm(key){
         const fc=document.getElementById('result-entry-form');if(!key){fc.innerHTML='';return;}
-        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');
-        const fixtures=[...league,...spring,...knockouts];
+        const league=getCurrentFixtures('league');const spring=getCurrentFixtures('spring');const knockouts=getCurrentFixtures('knockouts');const friendly=getCurrentFixtures('friendly');
+        const fixtures=[...league,...spring,...knockouts,...friendly];
         const fixture=fixtures.find(f=>getAvailKey(f)===key);if(!fixture){fc.innerHTML='';return;}
         const playing=getPlayingTeam(fixture);const results=loadMatchResults();const existing=results[key]||{};
         const avData=loadAvailability();const players=playing.length>0?playing:getPlayers().filter(p=>{const a=avData[key]||avData[fixture.date]||{};return a[p]==='Available';});
