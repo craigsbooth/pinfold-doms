@@ -126,11 +126,14 @@
             const parts=getDateParts(f.date),vc=f.venue?f.venue.toLowerCase():'',key=getAvailKey(f);
             const avail=avData[key]||avData[f.date]||{};const myStatus=currentPlayer?(avail[currentPlayer]||''):'';
             const playing=getPlayingTeam(f);const amI=currentPlayer&&playing.includes(currentPlayer);const isNext=idx===0;
+            // Count availability
+            let availCount=0,reserveCount=0;getPlayers().forEach(p=>{const s=avail[p]||'';if(s==='Available')availCount++;else if(s==='Reserve')reserveCount++;});
             let teamHtml='';if(playing.length>0){teamHtml=`<div class="fixture-playing-team"><span class="playing-label">🏆 Playing:</span>${playing.map(p=>`<span class="playing-name${p===currentPlayer?' me':''}">${p}</span>`).join('')}</div>`;}
             return `<div class="fixture-tile${amI?' playing-highlight':''}${isNext?' next-game':''}">
                 ${isNext?'<div class="next-game-banner">NEXT GAME</div>':''}
                 <div class="fixture-tile-header"><div class="fixture-date-block"><span class="day-name">${parts.dayName}</span><span class="day-num">${parts.dayNum}</span><span class="month">${parts.month}</span></div>
-                <div class="fixture-info"><div><div class="fixture-opponent-name">${f.opponent}</div>${f.venue?`<span class="venue-badge ${vc}">${f.venue}</span>`:''}${amI?'<span class="venue-badge home" style="margin-left:0.5rem;">You\'re Playing!</span>':''}</div></div></div>
+                <div class="fixture-info"><div><div class="fixture-opponent-name">${f.opponent}</div>${f.venue?`<span class="venue-badge ${vc}">${f.venue}</span>`:''}${amI?'<span class="venue-badge home" style="margin-left:0.5rem;">You\'re Playing!</span>':''}
+                <span class="avail-count${availCount>=6?' full':availCount>=4?' ok':' short'}">${availCount} available${reserveCount?` + ${reserveCount} reserve`:''}</span></div></div></div>
                 ${getDuty(f,'supper')||getDuty(f,'drivers')||getDuty(f,'bar')?`<div class="fixture-duties">${getDuty(f,'supper')?`<div class="duty-chip">🍽️ <strong>${getDuty(f,'supper')}</strong></div>`:''}${getDuty(f,'drivers')?`<div class="duty-chip">🚗 <strong>${getDuty(f,'drivers')}</strong></div>`:''}${getDuty(f,'bar')?`<div class="duty-chip">🍺 <strong>${getDuty(f,'bar')}</strong></div>`:''}</div>`:''}
                 ${teamHtml}
                 ${currentPlayer?`<div class="fixture-tile-body"><span class="avail-label">Are you available?</span><div class="avail-buttons">
