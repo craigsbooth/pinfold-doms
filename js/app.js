@@ -273,7 +273,17 @@
         const container=document.getElementById('tab-stats');const seasons=getAllSeasons();const opts=Object.keys(seasons).sort().reverse().map(id=>`<option value="${id}">${seasons[id].label}</option>`).join('');
         container.innerHTML=`<div class="season-picker"><label>Season:</label><select id="admin-stats-season">${opts}</select></div><div id="admin-stats-table" class="stats-wrapper"></div>`;
         const sel=document.getElementById('admin-stats-season'),tbl=document.getElementById('admin-stats-table');
-        function render(){const sid=sel.value;let stats;const live=computeStats();if(live.length>0&&sid===getActiveSeason())stats=live;else{const s=getAllSeasons()[sid];stats=s?s.stats:[];}if(!stats||!stats.length){tbl.innerHTML='<p style="color:var(--text-muted)">No stats yet.</p>';return;}const sorted=[...stats].sort((a,b)=>b.winRate-a.winRate);tbl.innerHTML=`<table class="stats-table"><thead><tr><th>#</th><th>Player</th><th>Games</th><th>Rounds</th><th>Win Rate</th><th>Avg</th></tr></thead><tbody>${sorted.map((p,i)=>{const pct=Math.round(p.winRate*100);const avg=p.gamesPlayed>0?(p.roundsWon/p.gamesPlayed).toFixed(1):'0';return`<tr><td>${i+1}</td><td><strong>${p.name}</strong></td><td>${p.gamesPlayed}</td><td>${p.roundsWon}</td><td>${pct}% <div class="win-rate-bar"><div class="win-rate-fill" style="width:${pct}%"></div></div></td><td>${avg}</td></tr>`;}).join('')}</tbody></table>`;}
+        function render(){
+            const sid=sel.value;const live=computeStats();const s=getAllSeasons()[sid];const hardcoded=s?s.stats:[];
+            // Merge hardcoded + live for the active season
+            const merged={};
+            if(hardcoded&&hardcoded.length){hardcoded.forEach(p=>{merged[p.name]={gamesPlayed:p.gamesPlayed,roundsWon:p.roundsWon};});}
+            if(sid===getActiveSeason()&&live.length){live.forEach(p=>{if(merged[p.name]){merged[p.name].gamesPlayed+=p.gamesPlayed;merged[p.name].roundsWon+=p.roundsWon;}else{merged[p.name]={gamesPlayed:p.gamesPlayed,roundsWon:p.roundsWon};}});}
+            const stats=Object.keys(merged).map(name=>{const m=merged[name];return{name,gamesPlayed:m.gamesPlayed,roundsWon:m.roundsWon,winRate:m.gamesPlayed*3>0?m.roundsWon/(m.gamesPlayed*3):0};});
+            if(!stats.length){tbl.innerHTML='<p style="color:var(--text-muted)">No stats yet.</p>';return;}
+            const sorted=[...stats].sort((a,b)=>b.winRate-a.winRate);
+            tbl.innerHTML=`<table class="stats-table"><thead><tr><th>#</th><th>Player</th><th>Games</th><th>Rounds</th><th>Win Rate</th><th>Avg</th></tr></thead><tbody>${sorted.map((p,i)=>{const pct=Math.round(p.winRate*100);const avg=p.gamesPlayed>0?(p.roundsWon/p.gamesPlayed).toFixed(1):'0';return`<tr><td>${i+1}</td><td><strong>${p.name}</strong></td><td>${p.gamesPlayed}</td><td>${p.roundsWon}</td><td>${pct}% <div class="win-rate-bar"><div class="win-rate-fill" style="width:${pct}%"></div></div></td><td>${avg}</td></tr>`;}).join('')}</tbody></table>`;
+        }
         sel.addEventListener('change',render);render();
     }
 

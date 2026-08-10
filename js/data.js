@@ -122,18 +122,18 @@ const CLUB_DATA = {
         { name: "Ron", gamesPlayed: 9, roundsWon: 12, winRate: 0.444 }
     ],
 
-    // Player Stats 2025-26
+    // Player Stats 2025-26 (League + Spring Cup combined - full season)
     stats_25_26: [
-        { name: "Craig", gamesPlayed: 12, roundsWon: 17, winRate: 0.472 },
-        { name: "Hayley", gamesPlayed: 3, roundsWon: 3, winRate: 0.333 },
-        { name: "Lee", gamesPlayed: 9, roundsWon: 7, winRate: 0.259 },
-        { name: "Lynne", gamesPlayed: 13, roundsWon: 17, winRate: 0.436 },
-        { name: "Mark Atkinson", gamesPlayed: 10, roundsWon: 17, winRate: 0.567 },
-        { name: "Mark Thompson", gamesPlayed: 8, roundsWon: 8, winRate: 0.333 },
-        { name: "Ron", gamesPlayed: 10, roundsWon: 13, winRate: 0.433 },
-        { name: "Trish", gamesPlayed: 1, roundsWon: 2, winRate: 0 },
-        { name: "Duncan", gamesPlayed: 11, roundsWon: 13, winRate: 0.394 },
-        { name: "Debra", gamesPlayed: 10, roundsWon: 16, winRate: 0.533 }
+        { name: "Craig", gamesPlayed: 18, roundsWon: 29, winRate: 0.537 },
+        { name: "Hayley", gamesPlayed: 5, roundsWon: 7, winRate: 0.467 },
+        { name: "Lee", gamesPlayed: 14, roundsWon: 18, winRate: 0.429 },
+        { name: "Lynne", gamesPlayed: 17, roundsWon: 23, winRate: 0.451 },
+        { name: "Mark Atkinson", gamesPlayed: 14, roundsWon: 25, winRate: 0.595 },
+        { name: "Mark Thompson", gamesPlayed: 14, roundsWon: 21, winRate: 0.500 },
+        { name: "Ron", gamesPlayed: 13, roundsWon: 19, winRate: 0.487 },
+        { name: "Trish", gamesPlayed: 1, roundsWon: 2, winRate: 0.667 },
+        { name: "Duncan", gamesPlayed: 13, roundsWon: 16, winRate: 0.410 },
+        { name: "Debra", gamesPlayed: 15, roundsWon: 27, winRate: 0.600 }
     ],
 
     // League Table 2025-26
