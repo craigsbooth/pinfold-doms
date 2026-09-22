@@ -253,19 +253,42 @@
         const fixtures=[...league,...spring,...knockouts,...friendly];
         const fixture=fixtures.find(f=>getAvailKey(f)===key);if(!fixture){fc.innerHTML='';return;}
         const playing=getPlayingTeam(fixture);const results=loadMatchResults();const existing=results[key]||{};
-        const avData=loadAvailability();const players=playing.length>0?playing:getPlayers().filter(p=>{const a=avData[key]||avData[fixture.date]||{};return a[p]==='Available';});
-        if(!players.length){fc.innerHTML='<p style="color:var(--text-muted)">No players selected. Tick who is playing in Fixtures & Team first.</p>';return;}
+        const avData=loadAvailability();
+        // Starting roster: existing saved players, else ticked team, else those marked Available
+        let roster=(existing.players&&existing.players.length)?existing.players.slice():(playing.length>0?playing.slice():getPlayers().filter(p=>{const a=avData[key]||avData[fixture.date]||{};return a[p]==='Available';}));
+        let selectedResult=existing.result||'';
+        // Working copy of scores, keyed by player, kept in sync as rows change
+        const scoreState={};roster.forEach(p=>{scoreState[p]=existing.scores?(existing.scores[p]??''):'';});
+
         fc.innerHTML=`<div class="result-form-card"><div class="result-form-header"><h4>${formatDate(fixture.date)} — vs ${fixture.opponent} (${fixture.venue})</h4></div>
             <div class="result-form-body"><div class="result-match-outcome"><label>Result:</label><div class="result-outcome-btns">
             <button class="outcome-btn ${existing.result==='WIN'?'selected-win':''}" data-result="WIN">✓ WIN</button>
             <button class="outcome-btn ${existing.result==='DRAW'?'selected-draw':''}" data-result="DRAW">= DRAW</button>
             <button class="outcome-btn ${existing.result==='LOST'?'selected-lost':''}" data-result="LOST">✗ LOST</button></div></div>
             <div class="result-scores-grid"><div class="score-header"><span>Player</span><span>Rounds Won (0-3)</span></div>
-            ${players.map(p=>{const sc=existing.scores?(existing.scores[p]??''):'';return`<div class="score-row"><span class="score-player-name">${p}</span><input type="number" class="score-input" data-player="${p}" min="0" max="3" step="0.5" value="${sc}" placeholder="0"></div>`;}).join('')}</div>
+            <div id="score-rows"></div></div>
+            <div class="result-add-player" style="margin-top:0.75rem;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;"><label style="font-size:0.85rem;color:var(--text-muted);">Add / swap player:</label><select id="result-add-player-select" style="padding:0.4rem 0.6rem;"></select></div>
             <div style="margin-top:1rem;display:flex;gap:1rem;align-items:center;"><button id="save-result-btn" class="btn-create-season">💾 Save</button><span id="result-save-msg" class="form-msg"></span></div></div></div>`;
-        let selectedResult=existing.result||'';
+
+        const rowsEl=fc.querySelector('#score-rows');
+        const addSelect=fc.querySelector('#result-add-player-select');
+
+        function captureScores(){rowsEl.querySelectorAll('.score-input').forEach(i=>{scoreState[i.dataset.player]=i.value;});}
+        function renderRows(){
+            if(!roster.length){rowsEl.innerHTML='<p style="color:var(--text-muted);padding:0.5rem 0;">No players. Add someone below.</p>';}
+            else{rowsEl.innerHTML=roster.map(p=>`<div class="score-row"><span class="score-player-name">${p}</span><input type="number" class="score-input" data-player="${p}" min="0" max="3" step="0.5" value="${scoreState[p]??''}" placeholder="0"><button type="button" class="btn-remove-score-row" data-player="${p}" title="Remove player" aria-label="Remove ${p}" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:1rem;padding:0 0.3rem;">✕</button></div>`).join('');}
+            rowsEl.querySelectorAll('.btn-remove-score-row').forEach(btn=>{btn.addEventListener('click',()=>{captureScores();roster=roster.filter(x=>x!==btn.dataset.player);renderRows();renderAddOptions();});});
+        }
+        function renderAddOptions(){
+            const opts=getPlayers().filter(p=>!roster.includes(p));
+            addSelect.innerHTML='<option value="">-- Choose player --</option>'+opts.map(p=>`<option value="${p}">${p}</option>`).join('');
+        }
+        addSelect.addEventListener('change',()=>{const p=addSelect.value;if(!p)return;captureScores();if(!roster.includes(p)){roster.push(p);if(scoreState[p]===undefined)scoreState[p]='';}addSelect.value='';renderRows();renderAddOptions();});
+
+        renderRows();renderAddOptions();
+
         fc.querySelectorAll('.outcome-btn').forEach(btn=>{btn.addEventListener('click',()=>{fc.querySelectorAll('.outcome-btn').forEach(b=>b.className='outcome-btn');selectedResult=btn.dataset.result;btn.classList.add(selectedResult==='WIN'?'selected-win':selectedResult==='DRAW'?'selected-draw':'selected-lost');});});
-        document.getElementById('save-result-btn').addEventListener('click',()=>{const msg=document.getElementById('result-save-msg');if(!selectedResult){showMsg(msg,'Select result.',true);return;}const scores={};let valid=true;fc.querySelectorAll('.score-input').forEach(i=>{const v=i.value.trim(),p=i.dataset.player;if(v==='')scores[p]=0;else{const n=parseFloat(v);if(isNaN(n)||n<0||n>3)valid=false;else scores[p]=n;}});if(!valid){showMsg(msg,'0-3 only.',true);return;}const all=loadMatchResults();all[key]={result:selectedResult,opponent:fixture.opponent,venue:fixture.venue,date:fixture.date,players,scores};saveMatchResults(all);showMsg(msg,'✓ Saved!',false);});
+        document.getElementById('save-result-btn').addEventListener('click',()=>{const msg=document.getElementById('result-save-msg');if(!selectedResult){showMsg(msg,'Select result.',true);return;}if(!roster.length){showMsg(msg,'Add at least one player.',true);return;}const scores={};let valid=true;rowsEl.querySelectorAll('.score-input').forEach(i=>{const v=i.value.trim(),p=i.dataset.player;if(v==='')scores[p]=0;else{const n=parseFloat(v);if(isNaN(n)||n<0||n>3)valid=false;else scores[p]=n;}});if(!valid){showMsg(msg,'0-3 only.',true);return;}const all=loadMatchResults();all[key]={result:selectedResult,opponent:fixture.opponent,venue:fixture.venue,date:fixture.date,players:roster.slice(),scores};saveMatchResults(all);showMsg(msg,'✓ Saved!',false);});
     }
 
     // ===== STATS =====
